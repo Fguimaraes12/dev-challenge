@@ -1,0 +1,35 @@
+{
+  "name": "@fguimaraes12/devchallenge",
+  "version": "0.1.0-beta",
+  "description": "CLI que gera desafios de programação personalizados usando IA",
+  "main": "dist/index.js",
+  "bin": {
+    "devchallenge": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node --esm src/index.ts"
+  },
+  "keywords": ["coding-challenge", "learning", "cli", "ai"],
+  "author": "",
+  "license": "ISC",
+  "files": [
+    "dist/**/*"
+  ],
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
+    "@clack/prompts": "^1.2.0",
+    "@google/generative-ai": "^0.24.1",
+    "chalk": "^5.6.2",
+    "execa": "^9.6.1",
+    "fs-extra": "^11.3.4",
+    "openai": "^6.34.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}
