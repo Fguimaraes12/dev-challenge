@@ -6,51 +6,52 @@ import { generateChallenge, Provider, ModelConfig } from "./generator";
 import { setupProject } from "./setup";
 import { Framework, Difficulty } from "./types";
 import { getApiKey, ensureConfigDir } from "./config";
+import { hintGreen, hintRed, hintYellow } from "./utils/colors/hints";
 
 const PROVIDER_MODELS: Record<Provider, { label: string; models: { value: string; label: string; hint: string }[] }> = {
   anthropic: {
-    label: "🟣 Anthropic (Claude)",
+    label: "Anthropic (Claude)",
     models: [
-      { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", hint: "Recomendado — rápido e inteligente" },
-      { value: "claude-opus-4-20250514", label: "Claude Opus 4", hint: "Mais poderoso" },
-      { value: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5", hint: "Mais rápido e barato" },
+      { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", hint: hintGreen("Recomendado — rápido e inteligente") },
+      { value: "claude-opus-4-20250514", label: "Claude Opus 4", hint: hintGreen("Mais poderoso") },
+      { value: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5", hint: hintGreen("Mais rápido e barato") },
     ],
   },
   openai: {
-    label: "🟢 OpenAI (GPT)",
+    label: "OpenAI (GPT)",
     models: [
-      { value: "gpt-4o", label: "GPT-4o", hint: "Recomendado" },
-      { value: "gpt-4.1", label: "GPT-4.1", hint: "Mais recente" },
-      { value: "gpt-4o-mini", label: "GPT-4o Mini", hint: "Mais rápido e barato" },
-      { value: "o3-mini", label: "o3-mini", hint: "Raciocínio avançado" },
+      { value: "gpt-4o", label: "GPT-4o", hint: hintGreen("Recomendado") },
+      { value: "gpt-4.1", label: "GPT-4.1", hint: hintGreen("Mais recente") },
+      { value: "gpt-4o-mini", label: "GPT-4o Mini", hint: hintGreen("Mais rápido e barato") },
+      { value: "o3-mini", label: "o3-mini", hint: hintGreen("Raciocínio avançado") },
     ],
   },
   openrouter: {
-    label: "🔶 OpenRouter (multi-modelo)",
+    label: "OpenRouter (multi-modelo)",
     models: [
-      { value: "meta-llama/llama-3.3-70b-instruct", label: "Llama 3.3 70B", hint: "Open source, gratuito" },
-      { value: "deepseek/deepseek-chat", label: "DeepSeek Chat", hint: "Ótimo para código" },
-      { value: "deepseek/deepseek-r1", label: "DeepSeek R1", hint: "Raciocínio avançado" },
-      { value: "mistralai/mistral-large", label: "Mistral Large", hint: "Europeu, muito bom" },
-      { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", hint: "Rápido e barato" },
-      { value: "anthropic/claude-sonnet-4-20250514", label: "Claude Sonnet 4 via OR", hint: "Claude pelo OpenRouter" },
+      { value: "meta-llama/llama-3.3-70b-instruct", label: "Llama 3.3 70B", hint: hintGreen("Open source, gratuito") },
+      { value: "deepseek/deepseek-chat", label: "DeepSeek Chat", hint: hintGreen("Ótimo para código") },
+      { value: "deepseek/deepseek-r1", label: "DeepSeek R1", hint: hintGreen("Raciocínio avançado") },
+      { value: "mistralai/mistral-large", label: "Mistral Large", hint: hintGreen("Europeu, muito bom") },
+      { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", hint: hintGreen("Rápido e barato") },
+      { value: "anthropic/claude-sonnet-4-20250514", label: "Claude Sonnet 4 via OR", hint: hintGreen("Claude pelo OpenRouter") },
     ],
   },
   google: {
-    label: "🔵 Google (Gemini)",
+    label: "Google (Gemini)",
     models: [
-      { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", hint: "Rápido e gratuito" },
-      { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", hint: "Mais poderoso" },
-      { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", hint: "Mais rápido" },
+      { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", hint: hintGreen("Rápido e gratuito") },
+      { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", hint: hintGreen("Mais poderoso") },
+      { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", hint: hintGreen("Mais rápido") },
     ],
   },
   qwen: {
-    label: "🟠 Qwen (Alibaba)",
+    label: "Qwen (Alibaba)",
     models: [
-      { value: "qwen3-coder-plus", label: "Qwen3 Coder Plus", hint: "Recomendado — modelo de código" },
-      { value: "qwen-plus", label: "Qwen Plus", hint: "Equilíbrio entre velocidade e qualidade" },
-      { value: "qwen-turbo", label: "Qwen Turbo", hint: "Mais rápido e barato" },
-      { value: "qwen-max", label: "Qwen Max", hint: "Mais poderoso" },
+      { value: "qwen3-coder-plus", label: "Qwen3 Coder Plus", hint: hintGreen("Recomendado — modelo de código") },
+      { value: "qwen-plus", label: "Qwen Plus", hint: hintGreen("Equilíbrio entre velocidade e qualidade") },
+      { value: "qwen-turbo", label: "Qwen Turbo", hint: hintGreen("Mais rápido e barato") },
+      { value: "qwen-max", label: "Qwen Max", hint: hintGreen("Mais poderoso") },
     ],
   },
 };
@@ -121,11 +122,11 @@ async function main() {
   const framework = await p.select({
     message: "Qual linguagem/framework você quer praticar?",
     options: [
-      { value: "nextjs", label: "⚡ Next.js", hint: "React + SSR/SSG" },
-      { value: "react", label: "⚛️  React", hint: "Vite + React" },
-      { value: "typescript", label: "🟦 TypeScript", hint: "Node.js + TS puro" },
-      { value: "vue", label: "💚 Vue.js", hint: "Vite + Vue 3" },
-      { value: "node", label: "🟩 Node.js", hint: "Express + Node" },
+      { value: "nextjs", label: "Next.js", hint: hintGreen("React + SSR/SSG") },
+      { value: "react", label: "React", hint: hintGreen("Vite + React") },
+      { value: "typescript", label: "TypeScript", hint: hintGreen("Node.js + TS puro") },
+      { value: "vue", label: "Vue.js", hint: hintGreen("Vite + Vue 3") },
+      { value: "node", label: "Node.js", hint: hintGreen("Express + Node") },
     ],
   });
 
@@ -135,9 +136,9 @@ async function main() {
   const difficulty = await p.select({
     message: "Qual nível de dificuldade?",
     options: [
-      { value: "easy", label: "🟢 Fácil", hint: "Conceitos básicos, bastante orientação" },
-      { value: "medium", label: "🟡 Médio", hint: "Conceitos intermediários, orientação moderada" },
-      { value: "hard", label: "🔴 Difícil", hint: "Conceitos avançados, pouca orientação" },
+      { value: "easy", label: "Fácil", hint: hintGreen("Conceitos básicos, bastante orientação") },
+      { value: "medium", label: "Médio", hint: hintYellow("Conceitos intermediários, orientação moderada") },
+      { value: "hard", label: "Difícil", hint: hintRed("Conceitos avançados, pouca orientação") },
     ],
   });
 
