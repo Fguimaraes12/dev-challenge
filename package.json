@@ -1,6 +1,6 @@
 {
   "name": "@fguimaraes12/devchallenge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI que gera desafios de programação personalizados usando IA",
   "main": "dist/index.js",
   "bin": {
