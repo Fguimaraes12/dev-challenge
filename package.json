@@ -1,6 +1,6 @@
 {
   "name": "@fguimaraes12/devchallenge",
-  "version": "0.1.0-beta",
+  "version": "0.1.0",
   "description": "CLI que gera desafios de programação personalizados usando IA",
   "main": "dist/index.js",
   "bin": {
@@ -11,7 +11,12 @@
     "start": "node dist/index.js",
     "dev": "ts-node --esm src/index.ts"
   },
-  "keywords": ["coding-challenge", "learning", "cli", "ai"],
+  "keywords": [
+    "coding-challenge",
+    "learning",
+    "cli",
+    "ai"
+  ],
   "author": "",
   "license": "ISC",
   "files": [
