@@ -1,6 +1,6 @@
 {
   "name": "@fguimaraes12/devchallenge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI que gera desafios de programação personalizados usando IA",
   "main": "dist/index.js",
   "bin": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
     "@clack/prompts": "^1.2.0",
+    "@fguimaraes12/devchallenge": "^0.1.1",
     "@google/generative-ai": "^0.24.1",
     "chalk": "^5.6.2",
     "execa": "^9.6.1",
