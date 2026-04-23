@@ -10,7 +10,10 @@ export interface DevChallengeConfig {
   providers: Record<string, ProviderConfig>;
 }
 
-const CONFIG_DIR = path.join(process.env.USERPROFILE || process.env.HOME || ".", ".devchallenge");
+export const CONFIG_DIR = path.join(
+  process.env.USERPROFILE || process.env.HOME || ".",
+  ".devchallenge",
+);
 const CONFIG_PATH = path.join(CONFIG_DIR, "config.json");
 
 export function getConfig(): DevChallengeConfig {

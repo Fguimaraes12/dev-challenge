@@ -5,16 +5,31 @@ import chalk from "chalk";
 import { generateChallenge, Provider, ModelConfig } from "./generator";
 import { setupProject } from "./setup";
 import { Framework, Difficulty } from "./types";
-import { getApiKey, ensureConfigDir } from "./config";
+import { getApiKey, ensureConfigDir, CONFIG_DIR } from "./config";
 import { hintGreen, hintRed, hintYellow } from "./utils/colors/hints";
 
-const PROVIDER_MODELS: Record<Provider, { label: string; models: { value: string; label: string; hint: string }[] }> = {
+const PROVIDER_MODELS: Record<
+  Provider,
+  { label: string; models: { value: string; label: string; hint: string }[] }
+> = {
   anthropic: {
     label: "Anthropic (Claude)",
     models: [
-      { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", hint: hintGreen("Recomendado — rápido e inteligente") },
-      { value: "claude-opus-4-20250514", label: "Claude Opus 4", hint: hintGreen("Mais poderoso") },
-      { value: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5", hint: hintGreen("Mais rápido e barato") },
+      {
+        value: "claude-sonnet-4-20250514",
+        label: "Claude Sonnet 4",
+        hint: hintGreen("Recomendado — rápido e inteligente"),
+      },
+      {
+        value: "claude-opus-4-20250514",
+        label: "Claude Opus 4",
+        hint: hintGreen("Mais poderoso"),
+      },
+      {
+        value: "claude-haiku-4-5-20251001",
+        label: "Claude Haiku 4.5",
+        hint: hintGreen("Mais rápido e barato"),
+      },
     ],
   },
   openai: {
@@ -22,36 +37,91 @@ const PROVIDER_MODELS: Record<Provider, { label: string; models: { value: string
     models: [
       { value: "gpt-4o", label: "GPT-4o", hint: hintGreen("Recomendado") },
       { value: "gpt-4.1", label: "GPT-4.1", hint: hintGreen("Mais recente") },
-      { value: "gpt-4o-mini", label: "GPT-4o Mini", hint: hintGreen("Mais rápido e barato") },
-      { value: "o3-mini", label: "o3-mini", hint: hintGreen("Raciocínio avançado") },
-    ],
-  },
-  openrouter: {
-    label: "OpenRouter (multi-modelo)",
-    models: [
-      { value: "meta-llama/llama-3.3-70b-instruct", label: "Llama 3.3 70B", hint: hintGreen("Open source, gratuito") },
-      { value: "deepseek/deepseek-chat", label: "DeepSeek Chat", hint: hintGreen("Ótimo para código") },
-      { value: "deepseek/deepseek-r1", label: "DeepSeek R1", hint: hintGreen("Raciocínio avançado") },
-      { value: "mistralai/mistral-large", label: "Mistral Large", hint: hintGreen("Europeu, muito bom") },
-      { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", hint: hintGreen("Rápido e barato") },
-      { value: "anthropic/claude-sonnet-4-20250514", label: "Claude Sonnet 4 via OR", hint: hintGreen("Claude pelo OpenRouter") },
+      {
+        value: "gpt-4o-mini",
+        label: "GPT-4o Mini",
+        hint: hintGreen("Mais rápido e barato"),
+      },
+      {
+        value: "o3-mini",
+        label: "o3-mini",
+        hint: hintGreen("Raciocínio avançado"),
+      },
     ],
   },
   google: {
     label: "Google (Gemini)",
     models: [
-      { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", hint: hintGreen("Rápido e gratuito") },
-      { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", hint: hintGreen("Mais poderoso") },
-      { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", hint: hintGreen("Mais rápido") },
+      {
+        value: "gemini-2.0-flash",
+        label: "Gemini 2.0 Flash",
+        hint: hintGreen("Rápido e gratuito"),
+      },
+      {
+        value: "gemini-1.5-pro",
+        label: "Gemini 1.5 Pro",
+        hint: hintGreen("Mais poderoso"),
+      },
+      {
+        value: "gemini-1.5-flash",
+        label: "Gemini 1.5 Flash",
+        hint: hintGreen("Mais rápido"),
+      },
     ],
   },
   qwen: {
     label: "Qwen (Alibaba)",
     models: [
-      { value: "qwen3-coder-plus", label: "Qwen3 Coder Plus", hint: hintGreen("Recomendado — modelo de código") },
-      { value: "qwen-plus", label: "Qwen Plus", hint: hintGreen("Equilíbrio entre velocidade e qualidade") },
-      { value: "qwen-turbo", label: "Qwen Turbo", hint: hintGreen("Mais rápido e barato") },
-      { value: "qwen-max", label: "Qwen Max", hint: hintGreen("Mais poderoso") },
+      {
+        value: "qwen3-coder-plus",
+        label: "Qwen3 Coder Plus",
+        hint: hintGreen("Recomendado — modelo de código"),
+      },
+      {
+        value: "qwen-plus",
+        label: "Qwen Plus",
+        hint: hintGreen("Equilíbrio entre velocidade e qualidade"),
+      },
+      {
+        value: "qwen-turbo",
+        label: "Qwen Turbo",
+        hint: hintGreen("Mais rápido e barato"),
+      },
+      {
+        value: "qwen-max",
+        label: "Qwen Max",
+        hint: hintGreen("Mais poderoso"),
+      },
+    ],
+  },
+  openrouter: {
+    label: chalk.green("OpenRouter (Modelos Free & Pagos)"),
+    models: [
+      {
+        value: "meta-llama/llama-3.3-70b-instruct",
+        label: "Llama 3.3 70B" + chalk.green(" FREE"),
+        hint: hintGreen("Open source, gratuito"),
+      },
+      {
+        value: "deepseek/deepseek-chat",
+        label: "DeepSeek Chat" + chalk.green(" FREE"),
+        hint: hintGreen("Ótimo para código"),
+      },
+      {
+        value: "deepseek/deepseek-r1",
+        label: "DeepSeek R1" + chalk.green(" FREE"),
+        hint: hintGreen("Raciocínio avançado"),
+      },
+      {
+        value: "mistralai/mistral-large",
+        label: "Mistral Large",
+        hint: hintGreen("Europeu, muito bom"),
+      },
+      {
+        value: "google/gemini-2.0-flash-001",
+        label: "Gemini 2.0 Flash",
+        hint: hintGreen("Rápido e barato"),
+      },
     ],
   },
 };
@@ -67,7 +137,9 @@ const ENV_KEY_MAP: Record<Provider, string> = {
 async function main() {
   console.clear();
 
-  p.intro(chalk.bgCyan(chalk.black(" 🚀 DevChallenge CLI — Aprenda Praticando! ")));
+  p.intro(
+    chalk.green(chalk.black(" 🚀 DevChallenge CLI — Aprenda Praticando! ")),
+  );
 
   // 1. Provedor
   const provider = await p.select({
@@ -78,7 +150,10 @@ async function main() {
     })),
   });
 
-  if (p.isCancel(provider)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(provider)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   // 2. Modelo
   const modelOptions = PROVIDER_MODELS[provider as Provider].models;
@@ -87,7 +162,10 @@ async function main() {
     options: modelOptions,
   });
 
-  if (p.isCancel(model)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(model)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   // 3. API Key (tenta env → config file → pede)
   const envMap: Record<Provider, string> = {
@@ -101,14 +179,22 @@ async function main() {
   let apiKey = getApiKey(provider as string);
 
   if (apiKey) {
-    const source = process.env[envKey] ? "variável de ambiente" : "arquivo de config";
-    p.log.success(`✅ API Key encontrada no ${source}.`);
+    const source = process.env[envKey]
+      ? "variável de ambiente"
+      : "arquivo de config";
+    p.log.success(
+      `✅ API Key encontrada no ${source}. ${chalk.green(`seu diretório: ${CONFIG_DIR}`)}`,
+    );
   } else {
     const inputKey = await p.password({
-      message: `Cole sua API Key (${envKey}):`,
-      validate: (v) => (!v || v.trim().length < 10 ? "API Key inválida." : undefined),
+      message: `Cole sua API Key (${envKey}) ${envKey === "OPENROUTER_API_KEY" ? chalk.green("primeira vez ? crie sua conta --> https://openrouter.ai/") : null} :`,
+      validate: (v) =>
+        !v || v.trim().length < 10 ? "API Key inválida." : undefined,
     });
-    if (p.isCancel(inputKey)) { p.cancel("Cancelado."); process.exit(0); }
+    if (p.isCancel(inputKey)) {
+      p.cancel("Cancelado.");
+      process.exit(0);
+    }
     apiKey = inputKey.toString().trim();
   }
 
@@ -124,36 +210,62 @@ async function main() {
     options: [
       { value: "nextjs", label: "Next.js", hint: hintGreen("React + SSR/SSG") },
       { value: "react", label: "React", hint: hintGreen("Vite + React") },
-      { value: "typescript", label: "TypeScript", hint: hintGreen("Node.js + TS puro") },
+      {
+        value: "typescript",
+        label: "TypeScript",
+        hint: hintGreen("Node.js + TS puro"),
+      },
       { value: "vue", label: "Vue.js", hint: hintGreen("Vite + Vue 3") },
       { value: "node", label: "Node.js", hint: hintGreen("Express + Node") },
     ],
   });
 
-  if (p.isCancel(framework)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(framework)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   // 5. Dificuldade
   const difficulty = await p.select({
     message: "Qual nível de dificuldade?",
     options: [
-      { value: "easy", label: "Fácil", hint: hintGreen("Conceitos básicos, bastante orientação") },
-      { value: "medium", label: "Médio", hint: hintYellow("Conceitos intermediários, orientação moderada") },
-      { value: "hard", label: "Difícil", hint: hintRed("Conceitos avançados, pouca orientação") },
+      {
+        value: "easy",
+        label: "Fácil",
+        hint: hintGreen("Conceitos básicos, bastante orientação"),
+      },
+      {
+        value: "medium",
+        label: "Médio",
+        hint: hintYellow("Conceitos intermediários, orientação moderada"),
+      },
+      {
+        value: "hard",
+        label: "Difícil",
+        hint: hintRed("Conceitos avançados, pouca orientação"),
+      },
     ],
   });
 
-  if (p.isCancel(difficulty)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(difficulty)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   // 6. Assunto
   const topic = await p.text({
     message: "Qual assunto específico você deseja praticar?",
     placeholder: "Ex: React Query, Server Components, JWT Auth...",
     validate(value) {
-      if (!value || value.trim().length < 3) return "Descreva um assunto com pelo menos 3 caracteres.";
+      if (!value || value.trim().length < 3)
+        return "Descreva um assunto com pelo menos 3 caracteres.";
     },
   });
 
-  if (p.isCancel(topic)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(topic)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   // 7. Nome do projeto
   const defaultName = `desafio-${framework}-${topic.toString().toLowerCase().replace(/\s+/g, "-").slice(0, 20)}`;
@@ -163,24 +275,35 @@ async function main() {
     placeholder: defaultName,
   });
 
-  if (p.isCancel(projectName)) { p.cancel("Cancelado."); process.exit(0); }
+  if (p.isCancel(projectName)) {
+    p.cancel("Cancelado.");
+    process.exit(0);
+  }
 
   console.log("");
 
   // 8. Gerar desafio com IA
   const spinner = p.spinner();
-  spinner.start(`🤖 Gerando desafio com ${PROVIDER_MODELS[provider as Provider].label}...`);
+  spinner.start(
+    `🤖 Gerando desafio com ${PROVIDER_MODELS[provider as Provider].label}...`,
+  );
 
   let challenge;
   try {
     challenge = await generateChallenge(
-      { framework: framework as Framework, difficulty: difficulty as Difficulty, topic: topic.toString() },
-      modelConfig
+      {
+        framework: framework as Framework,
+        difficulty: difficulty as Difficulty,
+        topic: topic.toString(),
+      },
+      modelConfig,
     );
     spinner.stop("✅ Desafio gerado com sucesso!");
   } catch (error) {
     spinner.stop("❌ Erro ao gerar desafio.");
-    p.log.error(`Falha na API: ${error instanceof Error ? error.message : String(error)}`);
+    p.log.error(
+      `Falha na API: ${error instanceof Error ? error.message : String(error)}`,
+    );
     process.exit(1);
   }
 
@@ -207,13 +330,15 @@ async function main() {
         `${chalk.bold("Leia o desafio:")}`,
         `  ${chalk.cyan("cat DESAFIO.md")}`,
       ].join("\n"),
-      "🎯 Tudo pronto!"
+      "🎯 Tudo pronto!",
     );
 
     p.outro(chalk.green("Bora codar! 💪 Boa sorte!"));
   } catch (error) {
     spinner.stop("❌ Erro ao criar projeto.");
-    p.log.error(`Falha: ${error instanceof Error ? error.message : String(error)}`);
+    p.log.error(
+      `Falha: ${error instanceof Error ? error.message : String(error)}`,
+    );
     process.exit(1);
   }
 }
