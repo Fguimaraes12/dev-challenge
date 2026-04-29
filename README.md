@@ -89,4 +89,4 @@ ISC
 
 ---
 
-_Feito com por fguimaraes12_
+_Criado por fguimaraes12_
